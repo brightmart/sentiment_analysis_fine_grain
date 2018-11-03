@@ -13,7 +13,7 @@ set_random_seed(16)
 from keras.layers import *
 from keras.preprocessing import sequence
 from gensim.models.keyedvectors import KeyedVectors
-from classifier_rcnn import TextClassifier
+from old.classifier_rcnn import TextClassifier
 
 
 def getClassification(arr):

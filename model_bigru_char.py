@@ -54,30 +54,34 @@ class Metrics(Callback):
         return
 
 
-# load train and validation file, read content seperately
+# 1. load train and validation file, read content seperately
 data = pd.read_csv("preprocess/train_char.csv")
 data["content"] = data.apply(lambda x: eval(x[1]), axis=1)
 
 validation = pd.read_csv("preprocess/validation_char.csv")
 validation["content"] = validation.apply(lambda x: eval(x[1]), axis=1)
 
-model_dir = "model_bigru_char/"
+# 2. generate vocabulary and a dict of word2index.
+model_dir = 'bigru_char_checkpoint/' # "model_bigru_char/"
 maxlen = 1200
 max_features = 20000
 batch_size = 128
 epochs = 15
 tokenizer = text.Tokenizer(num_words=None)
+
+print("type of data['content'].values:",type(data["content"].values))
 tokenizer.fit_on_texts(data["content"].values)
 with open('tokenizer_char.pickle', 'wb') as handle:
     pickle.dump(tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-word_index = tokenizer.word_index
+word_index = tokenizer.word_index # a dict, each word has a id.
 w2_model = KeyedVectors.load_word2vec_format("word2vec/chars.vector", binary=True, encoding='utf8',
                                              unicode_errors='ignore')
-embeddings_index = {}
+# 3. load pre-train word embedding
+# embeddings_index = {}
 embeddings_matrix = np.zeros((len(word_index) + 1, w2_model.vector_size))
 word2idx = {"_PAD": 0}
-vocab_list = [(k, w2_model.wv[k]) for k, v in w2_model.wv.vocab.items()]
+# vocab_list = [(k, w2_model.wv[k]) for k, v in w2_model.wv.vocab.items()]
 
 for word, i in word_index.items():
     if word in w2_model:
@@ -87,6 +91,7 @@ for word, i in word_index.items():
     if embedding_vector is not None:
         embeddings_matrix[i] = embedding_vector
 
+# ????
 X_train = data["content"].values
 Y_train_ltc = pd.get_dummies(data["location_traffic_convenience"])[[-2, -1, 0, 1]].values
 Y_train_ldfbd = pd.get_dummies(data["location_distance_from_business_district"])[[-2, -1, 0, 1]].values
@@ -131,12 +136,14 @@ Y_validation_dr = pd.get_dummies(validation["dish_recommendation"])[[-2, -1, 0, 
 Y_validation_ooe = pd.get_dummies(validation["others_overall_experience"])[[-2, -1, 0, 1]].values
 Y_validation_owta = pd.get_dummies(validation["others_willing_to_consume_again"])[[-2, -1, 0, 1]].values
 
+# convert text to indices as a sequence, pad sequences.
 list_tokenized_train = tokenizer.texts_to_sequences(X_train)
 input_train = sequence.pad_sequences(list_tokenized_train, maxlen=maxlen)
 
 list_tokenized_validation = tokenizer.texts_to_sequences(X_validation)
 input_validation = sequence.pad_sequences(list_tokenized_validation, maxlen=maxlen)
 
+# train and save model 1 for location_traffic_convenience.
 print("model1")
 model1 = TextClassifier().model(embeddings_matrix, maxlen, word_index, 4)
 file_path = model_dir + "model_ltc_{epoch:02d}.hdf5"

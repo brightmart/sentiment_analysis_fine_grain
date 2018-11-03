@@ -12,7 +12,7 @@ from keras.preprocessing import text, sequence
 from keras.callbacks import ModelCheckpoint, Callback
 from sklearn.metrics import f1_score, recall_score, precision_score
 from keras.layers import *
-from classifier_rcnn import TextClassifier
+from old.classifier_rcnn import TextClassifier
 from gensim.models.keyedvectors import KeyedVectors
 import pickle
 import gc
