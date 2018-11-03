@@ -1,0 +1,3 @@
+sentiment_analysis_trainingset.csv 为训练集数据文件，共105000条评论数据
+sentiment_analysis_trainingset_annotations.docx 为数据标注说明文件
+protocol.txt 为数据集下载协议
