@@ -3,15 +3,15 @@
 
 Fine grain sentiment analysis from AI challenger, with data and runnable code and performances
 
-Important Notice: this project is based on pengshuang/AI-Comp's project(baseline), most of code is reused here. Here we reused 
+Important Notice: this project is based on pengshuang/AI-Comp's project(baseline), most of code is reused here. 
 
-this baseline, the main purpose is to save time as this code is runnable and have a reasonable performance already. 
+Here we reused this baseline, the main purpose is to save time as this code is runnable and have a reasonable performance 
 
-On line f1 score is 0.702 as reported in this baseline. we just want to try some new ideas, especially some new models,
+already. On line f1 score is 0.702 as reported in this baseline. we just want to try some new ideas, especially some new
+ 
+models, new technique introduced recently such as pre-train of language model on large corpus and gain fine. this project 
 
-new technique introduced recently such as pre-train of language model on large corpus and gain fine. this project is on
-
-its early stage.
+is on its early stage.
 
 ## Experiment on New Models
 
