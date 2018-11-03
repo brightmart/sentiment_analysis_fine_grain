@@ -1,0 +1,1 @@
+checkpoint of bigru_char will be saved here.

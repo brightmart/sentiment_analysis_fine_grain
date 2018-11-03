@@ -16,8 +16,11 @@ from classifier_bigru import TextClassifier
 from gensim.models.keyedvectors import KeyedVectors
 import pickle
 import gc
+import numpy as np
 
-
+"""
+train bigru_char model
+"""
 def getClassification(arr):
     arr = list(arr)
     if arr.index(max(arr)) == 0:
@@ -51,6 +54,7 @@ class Metrics(Callback):
         return
 
 
+# load train and validation file, read content seperately
 data = pd.read_csv("preprocess/train_char.csv")
 data["content"] = data.apply(lambda x: eval(x[1]), axis=1)
 
