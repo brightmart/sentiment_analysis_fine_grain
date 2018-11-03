@@ -1,0 +1,1 @@
+save word2vec here.

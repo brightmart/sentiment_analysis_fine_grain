@@ -7,11 +7,11 @@ Important Notice: this project is based on pengshuang/AI-Comp's project(baseline
 
 the main reason why we reused this baseline is to save time as this baseline is runnable and has a reasonable performance 
 
-already. Online f1 score is 0.702 as reported in this baseline. since we just want to try some new ideas, to do some improvement,
+already. Online f1 score is 0.702 as reported in this baseline. since we just want to try some new ideas, to do some 
 
-for example, we want to add some new models, and use some new techniques introduced recently such as pre-train of language model 
+improvement, for example, we want to add some new models, and use some new techniques introduced recently such as 
 
-on large corpus and gain fine. this project is on its early stage.
+pre-train of language model on large corpus and gain fine. this project is on its early stage.
 
 ## Experiment on New Models
 
