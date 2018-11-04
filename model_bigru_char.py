@@ -66,7 +66,7 @@ model_dir = 'bigru_char_checkpoint/' # "model_bigru_char/"
 maxlen = 1200
 max_features = 20000
 batch_size = 128
-epochs = 10 # 15
+epochs = 15
 tokenizer = text.Tokenizer(num_words=None)
 
 print("type of data['content'].values:",type(data["content"].values))

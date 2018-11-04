@@ -13,7 +13,7 @@ small model, use d_model=128,h=8,d_k=d_v=16(small), or d_model=64,h=8,d_k=d_v=8(
 import tensorflow as tf
 #import numpy as np
 #from model.bert_model import BertModel # TODO TODO TODO test whether pretrain can boost perofrmance with other model
-from model.bert_cnn_model import BertCNNModel as BertModel
+from model.bert_cnn_fine_grain_model import BertCNNFineGrainModel as BertModel
 
 from data_util_hdf5 import create_or_load_vocabulary,load_data_multilabel,assign_pretrained_word_embedding,set_config,get_lable2index
 import os
@@ -30,6 +30,7 @@ tf.app.flags.DEFINE_string("ckpt_dir","./checkpoint_lm/","checkpoint location fo
 tf.app.flags.DEFINE_string("ckpt_dir_save","./checkpoint_lm_save/","checkpoint location for the model for save fine-tuning") #save to here, so make it easy to upload for test
 
 tf.app.flags.DEFINE_string("tokenize_style","word","checkpoint location for the model")
+tf.app.flags.DEFINE_string("model_name","BertCNNFineGrainModel","text cnn model. pre-train and fine-tuning.")
 
 tf.app.flags.DEFINE_integer("vocab_size",50000,"maximum vocab size.")
 tf.app.flags.DEFINE_float("learning_rate",0.00001,"learning rate") #0.001
@@ -37,7 +38,7 @@ tf.app.flags.DEFINE_integer("batch_size", 64, "Batch size for training/evaluatin
 tf.app.flags.DEFINE_integer("decay_steps", 10000, "how many steps before decay learning rate.") # 32-->128
 tf.app.flags.DEFINE_float("decay_rate", 0.8, "Rate of decay for learning rate.") #0.65
 tf.app.flags.DEFINE_float("dropout_keep_prob", 0.9, "percentage to keep when using dropout.") #0.65
-tf.app.flags.DEFINE_integer("sequence_length",200,"max sentence length")#400
+tf.app.flags.DEFINE_integer("sequence_length",800,"max sentence length")#400
 tf.app.flags.DEFINE_integer("sequence_length_lm",10,"max sentence length for masked language model")
 
 tf.app.flags.DEFINE_boolean("is_training",True,"is training.true:tranining,false:testing/inference")
@@ -59,9 +60,10 @@ tf.app.flags.DEFINE_integer("d_v", 16, "dimension of v") # 64-->16
 
 def main(_):
     # 1.load vocabulary of token from cache file save from pre-trained stage; load label dict from training file; print some message.
-    vocab_word2index, _= create_or_load_vocabulary(FLAGS.data_path,FLAGS.training_data_file,FLAGS.vocab_size,test_mode=FLAGS.test_mode,tokenize_style=FLAGS.tokenize_style)
+    vocab_word2index, _= create_or_load_vocabulary(FLAGS.data_path,FLAGS.training_data_file,FLAGS.vocab_size,test_mode=FLAGS.test_mode,tokenize_style=FLAGS.tokenize_style,model_name=FLAGS.model_name)
     label2index=get_lable2index(FLAGS.data_path,FLAGS.training_data_file, tokenize_style=FLAGS.tokenize_style)
     vocab_size = len(vocab_word2index);print("cnn_model.vocab_size:",vocab_size);num_classes=len(label2index);print("num_classes:",num_classes)
+    iii=0;iii/0 # todo test first two function, then continue
     # load training data.
     train,valid, test= load_data_multilabel(FLAGS.data_path,FLAGS.training_data_file,FLAGS.valid_data_file,FLAGS.test_data_file,vocab_word2index,label2index,FLAGS.sequence_length,
                                             process_num=FLAGS.process_num,test_mode=FLAGS.test_mode,tokenize_style=FLAGS.tokenize_style)
