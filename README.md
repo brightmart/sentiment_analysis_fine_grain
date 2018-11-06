@@ -15,6 +15,10 @@ pre-train of language model on large corpus and gain fine. this project is on it
 ## Experiment on New Models
 
 add something here.
+   
+   <img src="https://github.com/brightmart/sentiment_analysis_fine_grain/blob/master/data/img/fine_grain.jpeg"  width="65%" height="65%" />
+
+   for more, check model/bert_cnn_fine_grain_model.py
 
 ## Usage
 
