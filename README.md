@@ -21,8 +21,19 @@ add something here.
    for more, check model/bert_cnn_fine_grain_model.py
 
 ## Usage
+    
+     1. generate train/validation/test set, vocab of word and label2index, then save cache file to preprocess_word.
+        
+        preprocess_word.ipynb(step by step)
+     
+     2. train the model:
+        
+        train_cnn_fine_grain.py
+       
 
-    1. generate train/validation/test set:
+## OLD Usage
+
+    1. generate train/validation/test set(char level:
        
        Preprocess_char.ipynb
     
