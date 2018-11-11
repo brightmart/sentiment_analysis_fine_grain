@@ -163,13 +163,15 @@ class BertCNNFineGrainModel:
         transoform each sub task using one-layer MLP ,then get logits.
         get some insights from densely connected layers from recently development
         """
-        #h = tf.layers.dense(h, self.hidden_size, activation=tf.nn.relu, use_bias=True) # [None, hidden_size]
-        #h = tf.nn.dropout(h, keep_prob=self.dropout_keep_prob) # [None, hidden_size]
-        h = tf.split(h, self.num_fine_grain_type, axis=1) #a list. length is num_fine_grain, each element is:[None,h_fine_grain]. h_fine_grain=hidden_size/num_fine_grain
+        print("project_tasks.h:",h.shape) # todo may be should use a dense layer before split.
+        h = tf.layers.dense(h, self.num_fine_grain_value* self.num_fine_grain_value, activation=tf.nn.relu, use_bias=True) # [None, num_fine_grain_value*num_fine_grain_value]
+        h = tf.nn.dropout(h, keep_prob=self.dropout_keep_prob) # [None, num_fine_grain_value*num_fine_grain_value]
+        h_split = tf.split(h, self.num_fine_grain_type, axis=1) #a list. length is num_fine_grain, each element is:[None,h_fine_grain]. h_fine_grain=hidden_size/num_fine_grain
         logits_list=[]
-        for index, h_sub in enumerate(h): # h_sub:[None, h_fine_grain]
-            logits = tf.layers.dense(h_sub, self.num_fine_grain_value,use_bias=True)  # shape:[None,num_fine_grain_value]
-            logits_list.append(logits)
+        for index, h_sub in enumerate(h_split): # h_sub:[None, h_fine_grain]
+            with tf.variable_scope("project_tasks_"+str(index)):
+                logits = tf.layers.dense(h_sub, self.num_fine_grain_value,use_bias=True)  # shape:[None,num_fine_grain_value]
+                logits_list.append(logits)
         return logits_list
 
     def loss_lm(self,l2_lambda=0.0001*3):
@@ -191,8 +193,8 @@ class BertCNNFineGrainModel:
         """
         input_y_list = tf.split(self.input_y, self.num_fine_grain_type, axis=1) # a list, length is num_fine_grain_type. each element is:[ batch_size, num_fine_grain_value]. num_fine_grain_value=num_classes/num_fine_grain_type.
         losses=0.0
-        for index, logit in enumerate(self.logits): # logit: [batch_size, self.num_fine_grain_value]
-            labels_sub=input_y_list[index] # [batch_size,num_fine_grain_value]
+        for chunk_index, logit in enumerate(self.logits): # logit: [batch_size, self.num_fine_grain_value]
+            labels_sub=input_y_list[chunk_index] # [batch_size,num_fine_grain_value]
             loss_sub=tf.nn.softmax_cross_entropy_with_logits_v2(labels=labels_sub,logits=logit) # [batch_size,num_fine_grain_value]
             loss_sub=tf.reduce_mean((tf.reduce_sum(loss_sub, axis=1))) # shape=(?,)-->(). loss for all data in the batch-->single loss
             losses+=loss_sub
