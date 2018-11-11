@@ -12,6 +12,9 @@ improvement, for example, we want to add some new models, and use some new techn
 
 pre-train of language model on large corpus and gain fine. this project is on its early stage.
 
+<a href='https://challenger.ai/competition/fsauor2018'>Introduction to fine grain sentiment from AI Challenger</a>
+
+
 ## Experiment on New Models
 
 add something here.
@@ -22,15 +25,26 @@ add something here.
 
 ## Usage
     
-     1. generate train/validation/test set, vocab of word and label2index, then save cache file to preprocess_word.
-        
-        preprocess_word.ipynb(step by step)
+     1. download cache file
      
      2. train the model:
         
-        train_cnn_fine_grain.py
-       
+        python train_cnn_fine_grain.py
+ 
+ # Dataset and Cahce file
+ 
+ download cache file and dataset from <a href='https://pan.baidu.com/s/19aMHbPgfpBxz9sS-sYsjOg'>here</a>
+ 
+ cache file was generate by following steps from preprocess_word.ipynb. it contains everything you need for this task, 
+ 
+ including: processed train/validation/test set; vocabulary of word; a dict map label to index. 
+ 
+ take train_valid_test_vocab_cache.pik and put it under folder of preprocess_word/
+ 
+ raw data are also included in this zip file.
+ 
 
+       
 ## OLD Usage
 
     1. generate train/validation/test set(char level:
