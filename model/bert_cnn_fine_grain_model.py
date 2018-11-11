@@ -7,7 +7,7 @@
 
 import tensorflow as tf
 import numpy as np
-from model.encoder import Encoder
+#from model.encoder import Encoder
 from model.config import Config
 import os
 #os.environ["CUDA_VISIBLE_DEVICES"] = "7"
