@@ -25,16 +25,14 @@ add something here.
 
 ## Usage
     
-     1. download cache file
+     1. download <a href='https://pan.baidu.com/s/19aMHbPgfpBxz9sS-sYsjOg'>cache file of sentiment analysis</a>
      
      2. train the model:
         
         python train_cnn_fine_grain.py
  
  # Dataset and Cahce file
- 
- download cache file and dataset from <a href='https://pan.baidu.com/s/19aMHbPgfpBxz9sS-sYsjOg'>here</a>
- 
+  
  cache file was generate by following steps from preprocess_word.ipynb. it contains everything you need for this task, 
  
  including: processed train/validation/test set; vocabulary of word; a dict map label to index. 
