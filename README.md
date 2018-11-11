@@ -25,11 +25,11 @@ add something here.
 
 ## Usage
     
-     1. download <a href='https://pan.baidu.com/s/19aMHbPgfpBxz9sS-sYsjOg'>cache file of sentiment analysis</a>
+   1. download <a href='https://pan.baidu.com/s/19aMHbPgfpBxz9sS-sYsjOg'>cache file of sentiment analysis</a>
      
-     2. train the model:
+   2. train the model:
         
-        python train_cnn_fine_grain.py
+      python train_cnn_fine_grain.py
  
  # Dataset and Cahce file
   
