@@ -53,7 +53,6 @@ class Metrics(Callback):
         print(max(self.val_f1s))
         return
 
-
 # 1. load train and validation file, read content seperately
 data = pd.read_csv("preprocess/train_char.csv")
 data["content"] = data.apply(lambda x: eval(x[1]), axis=1)

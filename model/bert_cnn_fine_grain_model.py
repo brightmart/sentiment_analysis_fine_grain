@@ -152,7 +152,29 @@ class BertCNNFineGrainModel:
         #    logits = tf.layers.dense(h, self.num_classes)   # shape:[None,self.vocab_size]
         #    logits = tf.nn.dropout(logits,keep_prob=self.dropout_keep_prob)  # shape:[None,self.num_classes]
         #return logits # shape:[None,self.num_classes]
-        logits_list=self.project_tasks(h)
+        logits=self.project_tasks(h)
+        return logits
+
+    def project_tasks_old_1112(self,h):
+        """
+        project the representation, then to do classification.
+        :param h: batch_size,num_total_filters]
+        :return: logits: [batch_size, num_classes]
+        transoform each sub task using one-layer MLP ,then get logits.
+        get some insights from densely connected layers from recently development
+        """
+        print("project_tasks.h:",h.shape) # todo may be should use a dense layer before split.
+        h = tf.layers.dense(h, self.num_fine_grain_type* self.num_fine_grain_value*8, activation=tf.nn.relu, use_bias=True) # [None, num_fine_grain_type*num_fine_grain_value]
+        h = tf.nn.dropout(h, keep_prob=self.dropout_keep_prob) # [None, num_fine_grain_type*num_fine_grain_value]
+        h_split = tf.split(h, self.num_fine_grain_type, axis=1) #a list. length is num_fine_grain, each element is:[None,h_fine_grain]. h_fine_grain=hidden_size/num_fine_grain
+        logits_list=[]
+        for index, h_sub in enumerate(h_split): # h_sub:[None, h_fine_grain]
+            with tf.variable_scope("project_tasks_"+str(index)):
+                logits = tf.layers.dense(h_sub, self.num_fine_grain_value,use_bias=False)  # shape:[None,num_fine_grain_value]
+                logits_list.append(logits)
+        print("logits_list[0]:",logits_list[0].shape,";length of logit_list:",len(logits_list))
+        logit_stacked=tf.stack(logits_list,axis=2) # [batch_size, num_fine_grain_value,num_fine_grain_type]
+        self.logit_stacked=tf.reshape(logit_stacked,(-1,self. num_fine_grain_value* self. num_fine_grain_type))
         return logits_list
 
     def project_tasks(self,h):
@@ -164,15 +186,11 @@ class BertCNNFineGrainModel:
         get some insights from densely connected layers from recently development
         """
         print("project_tasks.h:",h.shape) # todo may be should use a dense layer before split.
-        h = tf.layers.dense(h, self.num_fine_grain_value* self.num_fine_grain_value, activation=tf.nn.relu, use_bias=True) # [None, num_fine_grain_value*num_fine_grain_value]
-        h = tf.nn.dropout(h, keep_prob=self.dropout_keep_prob) # [None, num_fine_grain_value*num_fine_grain_value]
-        h_split = tf.split(h, self.num_fine_grain_type, axis=1) #a list. length is num_fine_grain, each element is:[None,h_fine_grain]. h_fine_grain=hidden_size/num_fine_grain
-        logits_list=[]
-        for index, h_sub in enumerate(h_split): # h_sub:[None, h_fine_grain]
-            with tf.variable_scope("project_tasks_"+str(index)):
-                logits = tf.layers.dense(h_sub, self.num_fine_grain_value,use_bias=True)  # shape:[None,num_fine_grain_value]
-                logits_list.append(logits)
-        return logits_list
+        h = tf.layers.dense(h, self.num_fine_grain_type* self.num_fine_grain_value*8, activation=tf.nn.relu, use_bias=True) # [None, num_fine_grain_type*num_fine_grain_value]
+        h = tf.layers.dense(h, self.num_fine_grain_type* self.num_fine_grain_value*8, activation=tf.nn.relu, use_bias=True) # [None, num_fine_grain_type*num_fine_grain_value]
+
+        logits = tf.layers.dense(h, self.num_classes, activation=tf.nn.relu, use_bias=False) # [None, num_fine_grain_type*num_fine_grain_value]
+        return logits
 
     def loss_lm(self,l2_lambda=0.0001*3):
         # input: `logits` and `labels` must have the same shape `[batch_size, num_classes]`
@@ -187,20 +205,33 @@ class BertCNNFineGrainModel:
         loss=lm_loss+self.l2_loss_lm
         return loss
 
-    def loss(self,l2_lambda=0.0001*3):
+    def loss_old_1112(self,l2_lambda=0.0001*3):
         """
         compute total loss. first compute each sub loss, then sum up.
         """
         input_y_list = tf.split(self.input_y, self.num_fine_grain_type, axis=1) # a list, length is num_fine_grain_type. each element is:[ batch_size, num_fine_grain_value]. num_fine_grain_value=num_classes/num_fine_grain_type.
+        print("input_y.shape:",self.input_y.shape)
         losses=0.0
-        for chunk_index, logit in enumerate(self.logits): # logit: [batch_size, self.num_fine_grain_value]
+        for chunk_index, sub_logit in enumerate(self.logits): # logit: [batch_size, self.num_fine_grain_value]
             labels_sub=input_y_list[chunk_index] # [batch_size,num_fine_grain_value]
-            loss_sub=tf.nn.softmax_cross_entropy_with_logits_v2(labels=labels_sub,logits=logit) # [batch_size,num_fine_grain_value]
-            loss_sub=tf.reduce_mean((tf.reduce_sum(loss_sub, axis=1))) # shape=(?,)-->(). loss for all data in the batch-->single loss
+            #print("labels_sub:",labels_sub.shape,";sub_logit:",sub_logit.shape)
+            loss_sub=tf.nn.softmax_cross_entropy_with_logits_v2(labels=labels_sub,logits=sub_logit) # [batch_size,num_fine_grain_value]
+            print("loss_sub:",loss_sub.shape)
+            loss_sub=tf.reduce_mean(loss_sub) # shape=(?,)-->(). loss for all data in the batch-->single loss
             losses+=loss_sub
         self.losses= losses
         self.l2_loss = tf.add_n([tf.nn.l2_loss(v) for v in tf.trainable_variables() if 'bias' not in v.name]) * l2_lambda
         loss_val=self.losses+self.l2_loss
+        return loss_val
+
+    def loss(self,l2_lambda=0.0001*3):
+        """
+        compute total loss. first compute each sub loss, then sum up.
+        """
+        losses= tf.nn.sigmoid_cross_entropy_with_logits(labels=self.input_y,logits=self.logits)  #[batch_size,num_classes]
+        loss=tf.reduce_mean(losses)
+        self.l2_loss = tf.add_n([tf.nn.l2_loss(v) for v in tf.trainable_variables() if 'bias' not in v.name]) * l2_lambda
+        loss_val=loss+self.l2_loss
         return loss_val
 
     def conv_layers_return_2layers(self, input_x, name_scope, reuse_flag=False):  # great 81.3
@@ -298,88 +329,3 @@ class BertCNNFineGrainModel:
 
             #self.segment_embeddings = tf.get_variable("segment_embeddings", [self.d_model],initializer=tf.constant_initializer(1.0))  # a learned sequence embedding
             self.position_embeddings = tf.get_variable("position_embeddings", [self.sequence_length,self.d_model],initializer=tf.constant_initializer(1.0))  # [sequence_length,self.d_model]
-
-
-# train the model on toy task: learn to count,sum up input, and distinct whether the total value of input is below or greater than a threshold.
-# usage: use train() to train the model, and it will save checkpoint to file system; use predict() to make a prediction based on the trained model.
-
-def train():
-    # 1.init config and model
-    config=Config()
-    threshold=(config.sequence_length/2)+1
-    model = BertCNNFineGrainModel(config)
-    gpu_config = tf.ConfigProto()
-    gpu_config.gpu_options.allow_growth = True
-    saver = tf.train.Saver()
-    save_path = config.ckpt_dir + "model.ckpt"
-    #if not os.path.exists(config.ckpt_dir):
-    #    os.makedirs(config.ckpt_dir)
-    batch_size = 8
-    with tf.Session(config=gpu_config) as sess:
-        sess.run(tf.global_variables_initializer())
-        if os.path.exists(config.ckpt_dir): #
-            saver.restore(sess, tf.train.latest_checkpoint(save_path))
-        for i in range(10000):
-            # 2.feed data
-            input_x = np.random.randn(config.batch_size, config.sequence_length)  # [None, self.sequence_length]
-            input_x[input_x >= 0] = 1
-            input_x[input_x < 0] = 0
-            input_y = generate_label(input_x,threshold)
-            p_mask_lm=[i for i in range(batch_size)]
-            # 3.run session to train the model, print some logs.
-            loss, _ = sess.run([model.loss_val,  model.train_op],feed_dict={model.x_mask_lm: input_x, model.y_mask_lm: input_y,model.p_mask_lm:p_mask_lm,
-                                                                            model.dropout_keep_prob: config.dropout_keep_prob})
-            print(i, "loss:", loss, "-------------------------------------------------------")
-            if i==300:
-                print("label[0]:", input_y[0]);print("input_x:",input_x)
-            if i % 500 == 0:
-                saver.save(sess, save_path, global_step=i)
-
-# use saved checkpoint from model to make prediction, and print it, to see whether it is able to do toy task successfully.
-def predict():
-    config=Config()
-    threshold=(config.sequence_length/2)+1
-    config.batch_size=1
-    model = BertCNNFineGrainModel(config)
-    gpu_config = tf.ConfigProto()
-    gpu_config.gpu_options.allow_growth = True
-    saver = tf.train.Saver()
-    ckpt_dir = config.ckpt_dir
-    print("ckpt_dir:",ckpt_dir)
-    with tf.Session(config=gpu_config) as sess:
-        sess.run(tf.global_variables_initializer())
-        saver.restore(sess, tf.train.latest_checkpoint(ckpt_dir))
-        for i in range(100):
-            # 2.feed data
-            input_x = np.random.randn(config.batch_size, config.sequence_length)  # [None, self.sequence_length]
-            input_x[input_x >= 0] = 1
-            input_x[input_x < 0] = 0
-            target_label = generate_label(input_x,threshold)
-            input_sum=np.sum(input_x)
-            # 3.run session to train the model, print some logs.
-            logit,prediction = sess.run([model.logits, model.predictions],feed_dict={model.input_x: input_x ,model.dropout_keep_prob: config.dropout_keep_prob})
-            print("target_label:", target_label,";input_sum:",input_sum,"threshold:",threshold,";prediction:",prediction);
-            print("input_x:",input_x,";logit:",logit)
-
-
-def generate_label(input_x,threshold):
-    """
-    generate label with input
-    :param input_x: shape of [batch_size, sequence_length]
-    :return: y:[batch_size]
-    """
-    batch_size,sequence_length=input_x.shape
-    y=np.zeros((batch_size,2))
-    for i in range(batch_size):
-        input_single=input_x[i]
-        sum=np.sum(input_single)
-        if i == 0:print("sum:",sum,";threshold:",threshold)
-        y_single=1 if sum>threshold else 0
-        if y_single==1:
-            y[i]=[0,1]
-        else: # y_single=0
-            y[i]=[1,0]
-    return y
-
-#train()
-#predict()

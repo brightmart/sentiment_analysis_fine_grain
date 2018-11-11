@@ -34,7 +34,7 @@ tf.app.flags.DEFINE_string("tokenize_style","word","checkpoint location for the 
 tf.app.flags.DEFINE_string("model_name","BertCNNFineGrainModel","text cnn model. pre-train and fine-tuning.")
 
 tf.app.flags.DEFINE_integer("vocab_size",70000,"maximum vocab size.")
-tf.app.flags.DEFINE_float("learning_rate",0.0001,"learning rate") #0.001
+tf.app.flags.DEFINE_float("learning_rate",0.001,"learning rate") #0.001
 tf.app.flags.DEFINE_integer("batch_size", 64, "Batch size for training/evaluating.") # 32-->128
 tf.app.flags.DEFINE_integer("decay_steps", 10000, "how many steps before decay learning rate.") # 32-->128
 tf.app.flags.DEFINE_float("decay_rate", 0.8, "Rate of decay for learning rate.") #0.65
@@ -75,12 +75,14 @@ def main(_):
     if not os.path.exists(FLAGS.cache_file):
         print("cache file is missing. please generate it though step by step with preprocess_word.ipynb")
         return
-    data_f=open(FLAGS.cache_file, 'ab')
-    train_X, train_Y, valid_X, valid_Y, test_X, vocab_word2index, label2index=pickle.load(data_f)
+    train_X, train_Y, valid_X, valid_Y, test_X, vocab_word2index, label2index=None,None,None,None,None,None,None
+
+    with open(FLAGS.cache_file, 'rb') as data_f:
+        train_X, train_Y, valid_X, valid_Y, test_X, vocab_word2index, label2index=pickle.load(data_f)
     valid=(valid_X, valid_Y)
     data_f.close()
-    num_classes=len(vocab_word2index)
-    vocab_size=len(label2index)
+    num_classes=len(label2index)
+    vocab_size=len(vocab_word2index)
     FLAGS.sequence_length=train_X.shape[1] #
     print("test_model:",FLAGS.test_mode,";length of training data:",train_X.shape,";valid data:",valid_X.shape,";test data:",test_X.shape,";train_Y:",train_Y.shape)
     # 2.create session.
@@ -176,10 +178,10 @@ def do_eval(sess,model,valid,num_classes,label2index):
     :param label2index:
     :return:
     """
+    valid=valid[0:64*80] # todo
     number_examples=valid[0].shape[0]
-    valid=valid[0:64*15] # todo
     valid_x,valid_y=valid
-    print("number_examples:",number_examples)
+    print("number_examples for valid:",number_examples)
     eval_loss,eval_counter=0.0,0
     batch_size=FLAGS.batch_size
     label_dict=init_label_dict(num_classes)
@@ -188,12 +190,16 @@ def do_eval(sess,model,valid,num_classes,label2index):
         feed_dict = {model.input_x: valid_x[start:end],model.input_y:valid_y[start:end],model.dropout_keep_prob: 1.0}
         curr_eval_loss, logits= sess.run([model.loss_val,model.logits],feed_dict) # logits：[batch_size,label_size]
         #compute confuse matrix
-        for aspect_index in range(num_fine_grain_type):
-            start_sub=aspect_index*num_fine_grain_value
-            start_end=start_sub+num_fine_grain_value
-            valid_y_sub=valid_y[start:end][:,start_sub:start_end]
-            logits_sub=logits[start:end][:,start_sub:start_end]
-            label_dict=compute_confuse_matrix_batch(valid_y_sub[start:end],logits_sub,label_dict,name='bright')
+        label_dict=compute_confuse_matrix_batch(valid_y[start:end],logits,label_dict,name='bright')
+        #for aspect_index in range(num_fine_grain_type):
+        #    start_sub=aspect_index*num_fine_grain_value
+        #    start_end=start_sub+num_fine_grain_value
+        #    valid_y_sub=valid_y[start:end][:,start_sub:start_end]
+        #    logits_sub=logits[start:end][:,start_sub:start_end]
+        #    label_dict=compute_confuse_matrix_batch(valid_y_sub[start:end],logits_sub,label_dict,name='bright')
+        #    if start%3000==0:
+        #        print("valid_y_sub:",valid_y_sub)
+        #        print("logits_sub:",logits_sub)
         eval_loss=eval_loss+curr_eval_loss
         eval_counter=eval_counter+1
     #compute f1_micro & f1_macro

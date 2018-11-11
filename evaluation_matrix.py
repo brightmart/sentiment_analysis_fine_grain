@@ -8,7 +8,7 @@ compute f1 score(micro,macro) for accusation & relevant article, and score for p
 """
 
 small_value=0.00001
-random_number=500
+random_number=1000
 def compute_confuse_matrix_batch(y_targetlabel_list,y_logits_array,label_dict,name='default'):
     """
     compute confuse matrix for a batch
