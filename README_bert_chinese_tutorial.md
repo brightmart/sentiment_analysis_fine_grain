@@ -28,7 +28,13 @@
  
   <a href='https://github.com/brightmart/sentiment_analysis_fine_grain/blob/master/run_classifier_multi_labels_bert.py'>  使用bert做多类别任务（e.g.AI challenger情感分析任务），详见run_classifier_multi_labels_bert.py</a>
 
- 【在bert中文模型基础上，再预训练】
+ 【在bert中文模型基础上，做预训练，再调优fine-tuning】
  
-    1. run_pretraining.py
+    1. 生成预训练需要的文件： 每行为一个句子；每个文档中间用空行隔开
+    2. 生成tf.record格式的预训练语料：
+       create_pretraining_data.py
+    3. 使用已经生成的数据做预训练,可以指定初始的checkpoint:
+       run_pretraining.py
+    4. 调优fine-tuning
+       run_classifier.py
  

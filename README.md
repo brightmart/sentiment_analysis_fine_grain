@@ -65,13 +65,21 @@ add something here.
    
    ### Pre-train Bert model based on open-souced model, then do classification task
    
+   1. generate raw data: [ADD SOMETHING HERE]
+      
+      take sure each line is a sentence. between each document there is a blank line.
+   
    1. generate data for pre-train stage using:
        
-       python create_pretraining_data.py [ADD SOMETHING HERE]
+       python create_pretraining_data.py  
       
    2. pre-train model with generated data: 
        
-       python run_pretraining.py [ADD SOMETHING HERE]
+       python run_pretraining.py  
+   
+   3. fine-tuning
+       
+      python run_classifier.py 
    
    ### TextCNN
     
