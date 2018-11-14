@@ -520,7 +520,7 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
   assert len(input_ids) == max_seq_length
   assert len(input_mask) == max_seq_length
   assert len(segment_ids) == max_seq_length
-  print("label_map:",label_map)
+  print("label_map:",label_map,";length of label_map:",len(label_map))
   label_id=None
   if "," in example.label: # multiple label
       # get list of label
@@ -528,8 +528,9 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
       label_list=example.label.split(",")
       for label_ in label_list:
           label_id_list.append(label_map[label_])
+      print("label_id_list:",label_id_list)
       # convert to multi-hot style
-      label_id=[0 for l in range(len(label_list))]
+      label_id=[0 for l in range(len(label_map))]
       for j, label_index in enumerate(label_id_list):
           label_id[label_index]=1
   else: # single label
