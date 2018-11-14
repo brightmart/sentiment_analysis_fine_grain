@@ -104,7 +104,7 @@ def main(_):
                 loss_total_lm,counter=loss_total_lm+current_loss_lm,counter+1
                 if counter %30==0:
                     print("%d\t%d\tLearning rate:%.5f\tLoss_lm:%.3f\tCurrent_loss_lm:%.3f\tL2_loss:%.3f\t"%(epoch,counter,lr,float(loss_total_lm)/float(counter),current_loss_lm,l2_loss))
-                if start!=0 and start%(4000*FLAGS.batch_size)==0: # epoch!=0
+                if start!=0 and start%(3000*FLAGS.batch_size)==0: # epoch!=0
                     loss_valid, acc_valid= do_eval(sess, model, valid,batch_size)
                     print("%d\tValid.Epoch %d ValidLoss:%.3f\tAcc_valid:%.3f\t" % (counter,epoch, loss_valid, acc_valid*100))
                     # save model to checkpoint
