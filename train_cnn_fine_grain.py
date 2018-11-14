@@ -63,7 +63,7 @@ tf.app.flags.DEFINE_string("cache_file","./preprocess_word/train_valid_test_voca
 
 def main(_):
     # 1.load vocabulary of token from cache file save from pre-trained stage; load label dict from training file; print some message.
-    #vocab_word2index, _= create_or_load_vocabulary(FLAGS.data_path,FLAGS.training_data_file,FLAGS.vocab_size,test_mode=FLAGS.test_mode,tokenize_style=FLAGS.tokenize_style,model_name=FLAGS.model_name)
+    vocab_word2index, _= create_or_load_vocabulary(FLAGS.data_path,FLAGS.training_data_file,FLAGS.vocab_size,test_mode=FLAGS.test_mode,tokenize_style=FLAGS.tokenize_style,model_name=FLAGS.model_name)
     #label2index=get_lable2index(FLAGS.data_path,FLAGS.training_data_file, tokenize_style=FLAGS.tokenize_style)
     #vocab_size = len(vocab_word2index);print("cnn_model.vocab_size:",vocab_size);num_classes=len(label2index);print("num_classes:",num_classes)
     #  load training data.
