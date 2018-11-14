@@ -1,0 +1,1 @@
+you need to download pre-trained model from google, and put it into a folder(e.g.BERT_BASE_DIR)
