@@ -3,7 +3,9 @@ Multi-label Classification with BERT
 
 Deploy BERT for online prediction
 
+You can find the a short tutorial of how to use bert with chinese: < a href=''></a>
 
+ 
 <a href='https://challenger.ai/competition/fsauor2018'>Introduction to fine grain sentiment from AI Challenger</a>
 
 
