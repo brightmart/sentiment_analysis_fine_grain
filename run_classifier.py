@@ -731,7 +731,6 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
     logits = tf.nn.bias_add(logits, output_bias)
 
     print("labels:",labels,";logits:",logits,"isinstance(labels,list):",isinstance(labels,list))
-    labels.get_shape()
     # mulit-label classification: 1.multi-hot==> then use sigmoid to transform it to possibility
     probabilities=tf.nn.sigmoid(logits)
     log_probs=tf.log(probabilities)
