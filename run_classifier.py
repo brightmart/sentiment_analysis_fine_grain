@@ -514,7 +514,13 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
   assert len(input_mask) == max_seq_length
   assert len(segment_ids) == max_seq_length
   print("label_map:",label_map)
-  label_id = label_map[example.label]
+  label_id=None
+  if "," in example.label: # multiple label
+      label_id=[]
+      for label_ in example.label:
+          label_id.append(label_map[label_])
+  else: # single label
+      label_id = label_map[example.label]
   if ex_index < 5:
     tf.logging.info("*** Example ***")
     tf.logging.info("guid: %s" % (example.guid))
