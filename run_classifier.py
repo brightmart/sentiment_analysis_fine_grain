@@ -517,7 +517,8 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
   label_id=None
   if "," in example.label: # multiple label
       label_id=[]
-      for label_ in example.label:
+      label_list=example.label.split(",")
+      for label_ in label_list:
           label_id.append(label_map[label_])
   else: # single label
       label_id = label_map[example.label]
