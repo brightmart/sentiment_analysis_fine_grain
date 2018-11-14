@@ -16,7 +16,7 @@
  
 【session-feed方式使用bert模型;使用bert做在线预测】
 
-   <a href='https://github.com/brightmart/bert_language_understanding/blob/master/run_classifier_predict_online.py'> &nbsp&nbsp&nbsp&nbsp 使用bert做在线预测-简明例子</a>
+   <a href='https://github.com/brightmart/bert_language_understanding/blob/master/run_classifier_predict_online.py'>   使用bert做在线预测-简明例子</a>
  
 【目前支持的任务类型】
 
@@ -26,7 +26,7 @@
     
     3.文本分类(多类别,multi-label classification)
  
- <a herf='https://github.com/brightmart/sentiment_analysis_fine_grain/blob/master/run_classifier_multi_labels_bert.py'> &nbsp &nbsp &nbsp &nbsp 使用bert做多类别任务（e.g.AI challenger情感分析任务），详见run_classifier_multi_labels_bert.py</a>
+  <a href='https://github.com/brightmart/sentiment_analysis_fine_grain/blob/master/run_classifier_multi_labels_bert.py'>  使用bert做多类别任务（e.g.AI challenger情感分析任务），详见run_classifier_multi_labels_bert.py</a>
 
  【在bert中文模型基础上，再预训练】
  

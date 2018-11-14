@@ -3,9 +3,8 @@ Multi-label Classification with BERT
 
 Deploy BERT for online prediction
 
-You can find the a short tutorial of how to use bert with chinese: < a href=''></a>
+You can find the a short tutorial of how to use bert with chinese: <a href='https://github.com/brightmart/sentiment_analysis_fine_grain/blob/master/README_bert_chinese_tutorial.md'>BERT short chinese tutorial</a>
 
- 
 <a href='https://challenger.ai/competition/fsauor2018'>Introduction to fine grain sentiment from AI Challenger</a>
 
 
@@ -19,7 +18,7 @@ add something here.
 
 ## Usage
    
-   ### Bert for multi-label classificaiton
+   ### Bert for Multi-label Classificaiton
    
     export BERT_BASE_DIR=BERT_BASE_DIR/chinese_L-12_H-768_A-12
     export TEXT_DIR=TEXT_DIR
@@ -64,13 +63,35 @@ add something here.
  
    for more detail, check create_model and SentimentAnalysisFineGrainProcessor from run_classifier.py 
    
+   ### Pre-train Bert model based on open-souced model, then do classification task
+   
+   1. generate data for pre-train stage using:
+       
+       python create_pretraining_data.py [ADD SOMETHING HERE]
+      
+   2. pre-train model with generated data: 
+       
+       python run_pretraining.py [ADD SOMETHING HERE]
+   
    ### TextCNN
     
-   1. download <a href='https://pan.baidu.com/s/19aMHbPgfpBxz9sS-sYsjOg'>cache file of sentiment analysis</a>
+   1. download <a href='https://pan.baidu.com/s/19aMHbPgfpBxz9sS-sYsjOg'>cache file of sentiment analysis(tokens are in word level)</a>
      
    2. train the model:
         
       python train_cnn_fine_grain.py
+      
+        
+     cache file of TextCNN model was generate by following steps from preprocess_word.ipynb. 
+     
+     it contains everything you need to run TextCNN.
+     
+     it include: processed train/validation/test set; vocabulary of word; a dict map label to index. 
+     
+     take train_valid_test_vocab_cache.pik and put it under folder of preprocess_word/
+     
+     raw data are also included in this zip file.
+ 
       
    ### Pre-train TextCNN
    
@@ -81,17 +102,12 @@ add something here.
    2. fine-tuning for TextCNN
       
       python train_cnn_fine_grain.py
- 
- # Dataset and Cahce file
-  
- cache file was generate by following steps from preprocess_word.ipynb. it contains everything you need for this task, 
- 
- including: processed train/validation/test set; vocabulary of word; a dict map label to index. 
- 
- take train_valid_test_vocab_cache.pik and put it under folder of preprocess_word/
- 
- raw data are also included in this zip file.
- 
+      
+  ### Deploy BERT for online prediction
+    
+    with session and feed style you can easily deploy BERT.
+    
+  <a href='https://github.com/brightmart/bert_language_understanding/blob/master/run_classifier_predict_online.py'>online prediction with BERT, check more from here</a>
 
        
 ## OLD Usage
