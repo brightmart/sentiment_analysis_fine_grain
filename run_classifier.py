@@ -730,7 +730,7 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
     logits = tf.matmul(output_layer, output_weights, transpose_b=True) # 分类模型特有的分类层
     logits = tf.nn.bias_add(logits, output_bias)
 
-
+    print("labels:",labels,";logits:",logits,"isinstance(labels,list):",isinstance(labels,list))
     if isinstance(labels,list): # mulit-label classification: 1.multi-hot==> then use sigmoid to transform it to possibility
         log_probs=tf.nn.sigmoid(logits)
         one_hot_labels=labels
