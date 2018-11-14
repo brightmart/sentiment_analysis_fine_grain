@@ -31,7 +31,7 @@ tf.app.flags.DEFINE_string("ckpt_dir","./checkpoint_lm/","checkpoint location fo
 tf.app.flags.DEFINE_string("ckpt_dir_save","./checkpoint_lm_save/","checkpoint location for the model for save fine-tuning") #save to here, so make it easy to upload for test
 
 tf.app.flags.DEFINE_string("tokenize_style","word","checkpoint location for the model")
-tf.app.flags.DEFINE_string("model_name","BertCNNFineGrainModel","text cnn model. pre-train and fine-tuning.")
+tf.app.flags.DEFINE_string("model_name","","text cnn model. pre-train and fine-tuning.") # BertCNNFineGrainModel
 
 tf.app.flags.DEFINE_integer("vocab_size",70000,"maximum vocab size.")
 tf.app.flags.DEFINE_float("learning_rate",0.001,"learning rate") #0.001
