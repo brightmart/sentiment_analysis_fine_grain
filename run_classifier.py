@@ -125,7 +125,7 @@ flags.DEFINE_integer(
 
 
 # task specific parameter( sentiment analysis)
-flags.DEFINE_integer("num_classes", 20, "Total number of aspect for sentiment analysis")
+flags.DEFINE_integer("num_classes", 80, "Total number of aspect for sentiment analysis")
 
 flags.DEFINE_list("aspect_value_list", [-2,-1,0,1], "Values that a aspect can have")
 
@@ -384,7 +384,7 @@ class SentimentAnalysisFineGrainProcessor(DataProcessor):
     label_list=[]
     #num_aspect=FLAGS.num_aspects
     aspect_value_list=FLAGS.aspect_value_list #[-2,-1,0,1]
-    for i in range(FLAGS.num_classes):
+    for i in range(20):
         for value in aspect_value_list:
             label_list.append(str(i) + "_" + str(value))
     return label_list #[ {'0_-2': 0, '0_-1': 1, '0_0': 2, '0_1': 3,....'19_-2': 76, '19_-1': 77, '19_0': 78, '19_1': 79}]
