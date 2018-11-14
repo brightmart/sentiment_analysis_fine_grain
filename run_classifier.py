@@ -124,6 +124,13 @@ flags.DEFINE_integer(
     "Only used if `use_tpu` is True. Total number of TPU cores to use.")
 
 
+# task specific parameter( sentiment analysis)
+flags.DEFINE_integer("num_classes", 20, "Total number of aspect for sentiment analysis")
+
+flags.DEFINE_list("aspect_value_list", [-2,-1,0,1], "Values that a aspect can have")
+
+
+
 class InputExample(object):
   """A single training/test example for simple sequence classification."""
 
@@ -375,10 +382,10 @@ class SentimentAnalysisFineGrainProcessor(DataProcessor):
   def get_labels(self):
     """See base class."""
     label_list=[]
-    num_aspect=20
-    value_list=[-2,-1,0,1]
-    for i in range(num_aspect):
-        for value in value_list:
+    #num_aspect=FLAGS.num_aspects
+    aspect_value_list=FLAGS.aspect_value_list #[-2,-1,0,1]
+    for i in range(FLAGS.num_aspects):
+        for value in aspect_value_list:
             label_list.append(str(i) + "_" + str(value))
     return label_list #[ {'0_-2': 0, '0_-1': 1, '0_0': 2, '0_1': 3,....'19_-2': 76, '19_-1': 77, '19_0': 78, '19_1': 79}]
 
@@ -576,12 +583,12 @@ def file_based_convert_examples_to_features(
 def file_based_input_fn_builder(input_file, seq_length, is_training,
                                 drop_remainder):
   """Creates an `input_fn` closure to be passed to TPUEstimator."""
-
+  # task specific parameter
   name_to_features = {
       "input_ids": tf.FixedLenFeature([seq_length], tf.int64),
       "input_mask": tf.FixedLenFeature([seq_length], tf.int64),
       "segment_ids": tf.FixedLenFeature([seq_length], tf.int64),
-      "label_ids": tf.FixedLenFeature([], tf.int64),
+      "label_ids": tf.FixedLenFeature([FLAGS.num_classes], tf.int64), # ADD TO A FIXED LENGTH
   }
 
   def _decode_record(record, name_to_features):
