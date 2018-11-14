@@ -15,7 +15,7 @@ import tensorflow as tf
 #from model.bert_model import BertModel # TODO TODO TODO test whether pretrain can boost perofrmance with other model
 from model.bert_cnn_fine_grain_model import BertCNNFineGrainModel as BertModel
 
-from data_util_hdf5 import assign_pretrained_word_embedding,set_config
+from data_util_hdf5 import assign_pretrained_word_embedding,set_config,create_or_load_vocabulary
 import os
 import pickle
 from evaluation_matrix import *
