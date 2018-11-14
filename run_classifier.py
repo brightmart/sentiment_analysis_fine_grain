@@ -520,13 +520,21 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
   assert len(input_ids) == max_seq_length
   assert len(input_mask) == max_seq_length
   assert len(segment_ids) == max_seq_length
-  #print("label_map:",label_map)
+  # print("label_map:",label_map)
   label_id=None
   if "," in example.label: # multiple label
-      label_id=[]
+      # get list of label
+      label_id_=[]
       label_list=example.label.split(",")
       for label_ in label_list:
-          label_id.append(label_map[label_])
+          label_id_.append(label_map[label_])
+      tf.logging.info("label: %s (id = %s)" % (str(example.label), str(label_id_)))
+
+      # convert to multi-hot style
+      label_id=[]
+      for j in range(len(label_id_)):
+          index=label_id_[j]
+          label_id[index]=1
   else: # single label
       label_id = label_map[example.label]
   if ex_index < 5:
@@ -722,11 +730,18 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
 
     logits = tf.matmul(output_layer, output_weights, transpose_b=True) # 分类模型特有的分类层
     logits = tf.nn.bias_add(logits, output_bias)
-    probabilities = tf.nn.softmax(logits, axis=-1)
-    log_probs = tf.nn.log_softmax(logits, axis=-1)
 
-    one_hot_labels = tf.one_hot(labels, depth=num_labels, dtype=tf.float32)
 
+    if isinstance(labels,list): # mulit-label classification: 1.multi-hot==> then use sigmoid to transform it to possibility
+        log_probs=tf.nn.sigmoid(logits)
+        one_hot_labels=labels
+    else: # one-hot for single label classification
+        probabilities = tf.nn.softmax(logits, axis=-1)
+        log_probs = tf.nn.log_softmax(logits, axis=-1)
+        one_hot_labels = tf.one_hot(labels, depth=num_labels, dtype=tf.float32)
+
+    print("num_labels:",num_labels,";labels:",labels,";one_hot_labels:",one_hot_labels)
+    print("log_probs:",log_probs)
     per_example_loss = -tf.reduce_sum(one_hot_labels * log_probs, axis=-1) # 利用交叉熵就和
     loss = tf.reduce_mean(per_example_loss)
 
