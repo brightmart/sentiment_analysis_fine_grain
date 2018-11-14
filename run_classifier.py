@@ -528,7 +528,7 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
       label_list=example.label.split(",")
       for label_ in label_list:
           label_id_list.append(label_map[label_])
-      tf.logging.info("label: %s (id_list = %s)" % (str(example.label), str(label_id_list)))
+      if ex_index < 5:tf.logging.info("label: %s (id_list = %s)" % (str(example.label), str(label_id_list)))
 
       # convert to multi-hot style
       label_id=[0 for l in range(len(label_list))]
@@ -739,8 +739,8 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
         log_probs = tf.nn.log_softmax(logits, axis=-1)
         one_hot_labels = tf.one_hot(labels, depth=num_labels, dtype=tf.float32)
 
-    print("num_labels:",num_labels,";labels:",labels,";one_hot_labels:",one_hot_labels)
-    print("log_probs:",log_probs)
+    #print("num_labels:",num_labels,";labels:",labels,";one_hot_labels:",one_hot_labels)
+    #print("log_probs:",log_probs)
     per_example_loss = -tf.reduce_sum(one_hot_labels * log_probs, axis=-1) # 利用交叉熵就和
     loss = tf.reduce_mean(per_example_loss)
 
