@@ -528,7 +528,7 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
       label_list=example.label.split(",")
       for label_ in label_list:
           label_id_list.append(label_map[label_])
-      tf.logging.info("label: %s (id = %s)" % (str(example.label), str(label_id_)))
+      tf.logging.info("label: %s (id_list = %s)" % (str(example.label), str(label_id_list)))
 
       # convert to multi-hot style
       label_id=[0 for l in range(len(label_list))]
