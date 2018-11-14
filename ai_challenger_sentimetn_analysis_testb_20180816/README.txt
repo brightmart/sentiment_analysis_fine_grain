@@ -1,0 +1,2 @@
+sentiment_analysis_testb.csv 为测试集B数据文件，共200000条评论数据
+protocol.txt 为数据集下载协议

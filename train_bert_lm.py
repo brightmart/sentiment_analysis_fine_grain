@@ -25,10 +25,10 @@ FLAGS=tf.app.flags.FLAGS
 
 tf.app.flags.DEFINE_boolean("test_mode",False,"whether it is test mode. if it is test mode, only small percentage of data will be used")
 tf.app.flags.DEFINE_string("data_path","./data/","path of traning data.")
-tf.app.flags.DEFINE_string("mask_lm_source_file","./data/bert_train2.txt","path of traning data.")
+tf.app.flags.DEFINE_string("mask_lm_source_file","./data/sentiment_analysis_all.csv","path of traning data.") # sentiment_analysis_all.csv is concat of training and testb of this task, which are both csv format file
 tf.app.flags.DEFINE_string("ckpt_dir","./checkpoint_lm/","checkpoint location for the model") #save to here, so make it easy to upload for test
-tf.app.flags.DEFINE_integer("vocab_size",60000,"maximum vocab size.")
-tf.app.flags.DEFINE_integer("d_model", 64, "dimension of model") # 512-->128
+tf.app.flags.DEFINE_integer("vocab_size",70000,"maximum vocab size.")
+tf.app.flags.DEFINE_integer("d_model", 200, "dimension of model") # 512-->128
 tf.app.flags.DEFINE_integer("num_layer", 6, "number of layer")
 tf.app.flags.DEFINE_integer("num_header", 8, "number of header")
 tf.app.flags.DEFINE_integer("d_k", 8, "dimension of k") # 64
