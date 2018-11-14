@@ -520,7 +520,7 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
   assert len(input_ids) == max_seq_length
   assert len(input_mask) == max_seq_length
   assert len(segment_ids) == max_seq_length
-  # print("label_map:",label_map)
+  print("label_map:",label_map)
   label_id=None
   if "," in example.label: # multiple label
       # get list of label
@@ -528,12 +528,10 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
       label_list=example.label.split(",")
       for label_ in label_list:
           label_id_list.append(label_map[label_])
-      if ex_index < 5:tf.logging.info("label: %s (id_list = %s)" % (str(example.label), str(label_id_list)))
-
       # convert to multi-hot style
       label_id=[0 for l in range(len(label_list))]
-      for j, _ in enumerate(label_id_list):
-          label_id[j]=1
+      for j, label_index in enumerate(label_id_list):
+          label_id[label_index]=1
   else: # single label
       label_id = label_map[example.label]
   if ex_index < 5:
@@ -544,6 +542,7 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
     tf.logging.info("input_ids: %s" % " ".join([str(x) for x in input_ids]))
     tf.logging.info("input_mask: %s" % " ".join([str(x) for x in input_mask]))
     tf.logging.info("segment_ids: %s" % " ".join([str(x) for x in segment_ids]))
+    if "," in example.label: tf.logging.info("label: %s (id_list = %s)" % (str(example.label), str(label_id_list))) # if label_id is a list, try print multi-hot value: label_id_list
     tf.logging.info("label: %s (id = %s)" % (str(example.label), str(label_id))) # %d
 
   feature = InputFeatures(
