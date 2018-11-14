@@ -384,7 +384,7 @@ class SentimentAnalysisFineGrainProcessor(DataProcessor):
     label_list=[]
     #num_aspect=FLAGS.num_aspects
     aspect_value_list=FLAGS.aspect_value_list #[-2,-1,0,1]
-    for i in range(FLAGS.num_aspects):
+    for i in range(FLAGS.num_classes):
         for value in aspect_value_list:
             label_list.append(str(i) + "_" + str(value))
     return label_list #[ {'0_-2': 0, '0_-1': 1, '0_0': 2, '0_1': 3,....'19_-2': 76, '19_-1': 77, '19_0': 78, '19_1': 79}]
