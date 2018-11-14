@@ -75,10 +75,10 @@ def main(_):
     if not os.path.exists(FLAGS.cache_file):
         print("cache file is missing. please generate it though step by step with preprocess_word.ipynb")
         return
-    train_X, train_Y, valid_X, valid_Y, test_X, _, label2index=None,None,None,None,None,None,None
+    train_X, train_Y, valid_X, valid_Y, test_X, label2index=None,None,None,None,None,None
 
     with open(FLAGS.cache_file, 'rb') as data_f:
-        train_X, train_Y, valid_X, valid_Y, test_X, vocab_word2index, label2index=pickle.load(data_f)
+        train_X, train_Y, valid_X, valid_Y, test_X,_, label2index=pickle.load(data_f)
     valid=(valid_X, valid_Y)
     data_f.close()
     num_classes=len(label2index)
