@@ -524,17 +524,16 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
   label_id=None
   if "," in example.label: # multiple label
       # get list of label
-      label_id_=[]
+      label_id_list=[]
       label_list=example.label.split(",")
       for label_ in label_list:
-          label_id_.append(label_map[label_])
+          label_id_list.append(label_map[label_])
       tf.logging.info("label: %s (id = %s)" % (str(example.label), str(label_id_)))
 
       # convert to multi-hot style
-      label_id=[0 for i in range(len(label_list))]
-      for j in range(len(label_id_)):
-          index=label_id_[j]
-          label_id[index]=1
+      label_id=[0 for l in range(len(label_list))]
+      for j, _ in enumerate(label_id_list):
+          label_id[j]=1
   else: # single label
       label_id = label_map[example.label]
   if ex_index < 5:
