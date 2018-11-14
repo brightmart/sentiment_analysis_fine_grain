@@ -734,12 +734,12 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
     labels.get_shape()
     # mulit-label classification: 1.multi-hot==> then use sigmoid to transform it to possibility
     probabilities=tf.nn.sigmoid(logits)
-    log_probs=probabilities
+    log_probs=tf.log(probabilities)
     one_hot_labels=labels
     #  below is for single label classification
     #  one-hot for single label classification
     #  probabilities = tf.nn.softmax(logits, axis=-1)
-    #  log_probs = tf.nn.log_softmax(logits, axis=-1)
+    #log_probs = tf.nn.log_softmax(logits, axis=-1)
     #  one_hot_labels = tf.one_hot(labels, depth=num_labels, dtype=tf.float32)
 
     #print("num_labels:",num_labels,";labels:",labels,";one_hot_labels:",one_hot_labels)
