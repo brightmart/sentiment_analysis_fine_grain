@@ -731,20 +731,21 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
     logits = tf.matmul(output_layer, output_weights, transpose_b=True) # 分类模型特有的分类层
     logits = tf.nn.bias_add(logits, output_bias)
 
-    print("labels:",labels,";logits:",logits,"isinstance(labels,list):",isinstance(labels,list))
+    #print("labels:",labels,";logits:",logits,"isinstance(labels,list):",isinstance(labels,list))
     # mulit-label classification: 1.multi-hot==> then use sigmoid to transform it to possibility
     probabilities=tf.nn.sigmoid(logits)
-    log_probs=tf.log(probabilities)
-    one_hot_labels=tf.cast(labels,tf.float32)
+    #log_probs=tf.log(probabilities)
+    labels=tf.cast(labels,tf.float32)
     #  below is for single label classification
     #  one-hot for single label classification
     #  probabilities = tf.nn.softmax(logits, axis=-1)
     #log_probs = tf.nn.log_softmax(logits, axis=-1)
     #  one_hot_labels = tf.one_hot(labels, depth=num_labels, dtype=tf.float32)
 
-    #print("num_labels:",num_labels,";labels:",labels,";one_hot_labels:",one_hot_labels)
+    print("num_labels:",num_labels,";logits:",logits,";labels:",labels)
     #print("log_probs:",log_probs)
-    per_example_loss = -tf.reduce_sum(one_hot_labels * log_probs, axis=-1) # 利用交叉熵就和
+    #per_example_loss = -tf.reduce_sum(one_hot_labels * log_probs, axis=-1) # 利用交叉熵就和
+    per_example_loss=tf.nn.sigmoid_cross_entropy_with_logits(labels=labels, logits=logits)
     loss = tf.reduce_mean(per_example_loss)
 
     return (loss, per_example_loss, logits, probabilities)
