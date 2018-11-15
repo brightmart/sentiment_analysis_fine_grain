@@ -8,10 +8,14 @@ You can also find the a short tutorial of how to use bert with chinese: <a href=
 
 You can find Introduction to <a href='https://challenger.ai/competition/fsauor2018'>fine grain sentiment from AI Challenger</a>
 
+## Basic Ideas
+
+Add something here.
+
 
 ## Experiment on New Models
       
-   <img src="https://github.com/brightmart/sentiment_analysis_fine_grain/blob/master/data/img/fine_grain.jpg"  width="65%" height="65%" />
+   <img src="https://github.com/brightmart/sentiment_analysis_fine_grain/blob/master/data/img/fine_grain.jpg"  width="67%" height="67%" />
 
    for more, check model/bert_cnn_fine_grain_model.py
    
@@ -23,6 +27,8 @@ F1 Score                     |  0.678               | 0.685                     
 ----------------------------------------------------------------------------------------------
 
 Notice: F1 Score is reported on validation set
+
+<img src="https://github.com/brightmart/sentiment_analysis_fine_grain/blob/master/data/img/bert_sa.jpg"  width="65%" height="65%" />
 
 ## Usage
    
