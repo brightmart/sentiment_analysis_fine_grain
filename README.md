@@ -14,6 +14,15 @@ You can find Introduction to <a href='https://challenger.ai/competition/fsauor20
    <img src="https://github.com/brightmart/sentiment_analysis_fine_grain/blob/master/data/img/fine_grain.jpg"  width="65%" height="65%" />
 
    for more, check model/bert_cnn_fine_grain_model.py
+   
+## Performance 
+
+Model                        | TextCNN(No-pretrain)| TextCNN(Pretrain-Finetuning)| Bert(base_model_zh) | Bert(base_model_zh,pre-train on corpus)
+---                          | ---                 | ---                         | -----------           -----------
+F1 Score                     |  0.678               | 0.685                        |   ADD A NUMBER HERE     |  ADD A NUMBER HERE  
+----------------------------------------------------------------------------------------------
+
+Notice:F1 Score is reported on validation set
 
 ## Usage
    
