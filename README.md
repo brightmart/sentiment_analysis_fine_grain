@@ -80,10 +80,24 @@ Notice:F1 Score is reported on validation set
    1. generate raw data: [ADD SOMETHING HERE]
       
       take sure each line is a sentence. between each document there is a blank line.
+      
+      you can find generated data from zip file.
+      
+           use write_pre_train_doc() from preprocess_char.ipynb 
    
    1. generate data for pre-train stage using:
        
-       python create_pretraining_data.py  
+          export BERT_BASE_DIR=./BERT_BASE_DIR/chinese_L-12_H-768_A-12
+          nohup python create_pretraining_data.py \
+          --input_file=./PRE_TRAIN_DIR/bert_*_pretrain.txt \
+          --output_file=./PRE_TRAIN_DIR/tf_examples.tfrecord \
+          --vocab_file=$BERT_BASE_DIR/vocab.txt \
+          --do_lower_case=True \
+          --max_seq_length=512 \
+          --max_predictions_per_seq=60 \
+          --masked_lm_prob=0.15 \
+          --random_seed=12345 \
+          --dupe_factor=5 nohup_pre.out & 
       
    2. pre-train model with generated data: 
        
