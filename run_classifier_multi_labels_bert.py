@@ -822,9 +822,9 @@ def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
             #  accuracy = tf.metrics.accuracy(label_ids, predictions)
 
             predictions=tf.argmax(logits, axis=-1, output_type=tf.int32) # should be [batch_size,]
-            #label_id_=tf.argmax(label_ids_split[j],axis=-1)
-            print("label_ids_split[j]:",label_ids_split[j],";predictions:",predictions)
-            current_accuracy,update_op_accuracy=tf.metrics.accuracy(label_ids_split[j],predictions)
+            label_id_=tf.cast(tf.argmax(label_ids_split[j],axis=-1),dtype=tf.int32)
+            print("label_ids_split[j]:",label_ids_split[j],";predictions:",predictions,";label_id_:",label_id_)
+            current_accuracy,update_op_accuracy=tf.metrics.accuracy(label_id_,predictions)
             accuracy+=tf.cast(current_accuracy,dtype=tf.float64)
         accuracy=accuracy/tf.constant(FLAGS.num_aspects,dtype=tf.float64)
         loss = tf.metrics.mean(per_example_loss)
