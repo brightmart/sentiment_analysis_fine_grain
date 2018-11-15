@@ -820,7 +820,7 @@ def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
 
         for j,logits in enumerate(logits_split):
             predictions=tf.argmax(logits, axis=-1, output_type=tf.int32)
-            depth = (num_labels / FLAGS.num_aspects)
+            depth = tf.cast(num_labels / FLAGS.num_aspects,tf.int32)
             predictions_one_hot=tf.one_hot(predictions,depth=depth , dtype=tf.float32)
             label_id=label_ids_split[j]
             print("predictions_one_hot:",predictions_one_hot,";label_id:",label_id,";logits:",logits)
