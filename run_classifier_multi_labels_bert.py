@@ -818,18 +818,14 @@ def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
         label_ids_split=tf.split(logits,FLAGS.num_aspects,axis=-1) # a list. length is num_aspects
         accuracy=tf.constant(0.0,dtype=tf.float64)
 
-        for j,logits in enumerate(logits_split):
+        for j,logits in enumerate(logits_split): #
+            #  accuracy = tf.metrics.accuracy(label_ids, predictions)
+
             predictions=tf.argmax(logits, axis=-1, output_type=tf.int32) # should be [batch_size,]
-            #depth = tf.cast(num_labels / FLAGS.num_aspects,tf.int32)
-            #predictions_one_hot=tf.one_hot(predictions,depth=depth , dtype=tf.float64)
-            #label_id=tf.cast(label_ids_split[j],dtype=tf.int64)
-            label_id_=tf.argmax(label_ids_split[j],axis=-1)
-            #print("predictions_one_hot:",predictions_one_hot,";label_id:",label_id,";logits:",logits)
-            #current_accuarcy= tf.metrics.precision_at_k(label_id, predictions_one_hot,1)
-            current_accuracy,update_op_accuracy=tf.metrics.accuracy(label_id_,predictions)
+            #label_id_=tf.argmax(label_ids_split[j],axis=-1)
+            print("label_ids_split[j]:",label_ids_split[j],";predictions:",predictions)
+            current_accuracy,update_op_accuracy=tf.metrics.accuracy(label_ids_split[j],predictions)
             accuracy+=tf.cast(current_accuracy,dtype=tf.float64)
-            #print("###current_accuarcy:",current_accuarcy,";accuracy:",accuracy)
-            #accuracy+=tf.cast(current_accuarcy,dtype=tf.float64)
         accuracy=accuracy/tf.constant(FLAGS.num_aspects,dtype=tf.float64)
         loss = tf.metrics.mean(per_example_loss)
         return {
