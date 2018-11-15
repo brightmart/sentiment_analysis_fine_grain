@@ -833,7 +833,7 @@ def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
         accuracy=accuracy/tf.constant(FLAGS.num_aspects,dtype=tf.float64)
         loss = tf.metrics.mean(per_example_loss)
         return {
-            "eval_accuracy": (accuracy,update_op_accuracy)
+            "eval_accuracy": (accuracy,update_op_accuracy),
             "eval_loss": loss,
         }
 
