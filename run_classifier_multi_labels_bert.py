@@ -125,7 +125,8 @@ flags.DEFINE_integer(
 
 
 # task specific parameter( sentiment analysis)
-flags.DEFINE_integer("num_classes", 80, "Total number of aspect for sentiment analysis")
+flags.DEFINE_integer("num_classes", 80, "Total number of labels for sentiment analysis")
+flags.DEFINE_integer("num_aspects", 20, "Total number of aspect")
 
 flags.DEFINE_list("aspect_value_list", [-2,-1,0,1], "Values that a aspect can have")
 
@@ -810,10 +811,21 @@ def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
     elif mode == tf.estimator.ModeKeys.EVAL:
 
       def metric_fn(per_example_loss, label_ids, logits):
-        print("###metric_fn.logits:",logits.shape)
-        predictions = tf.argmax(logits, axis=-1, output_type=tf.int32)
-        print("###metric_fn.label_ids:",label_ids.shape,";predictions:",predictions.shape)
-        accuracy = tf.metrics.accuracy(label_ids, predictions)
+        #print("###metric_fn.logits:",logits.shape) # (?,80)
+        #predictions = tf.argmax(logits, axis=-1, output_type=tf.int32)
+        #print("###metric_fn.label_ids:",label_ids.shape,";predictions:",predictions.shape) # label_ids: (?,80);predictions:(?,)
+        logits_split=tf.split(logits,FLAGS.num_aspects,axis=-1) # a list. length is num_aspects
+        label_ids_split=tf.split(logits,FLAGS.label_ids,axis=-1) # a list. length is num_aspects
+        accuracy=tf.constant(0.0)
+
+        for j,logits in enumerate(logits_split):
+            predictions=tf.argmax(logits, axis=-1, output_type=tf.int32)
+            depth = (num_labels / FLAGS.num_aspects)
+            predictions_one_hot=tf.one_hot(predictions,depth=depth , dtype=tf.float32)
+            label_id=label_ids_split[j]
+            print("predictions_one_hot:",predictions_one_hot,";label_id:",label_id,";logits:",logits)
+            accuracy += tf.metrics.precision_at_k(label_id, predictions_one_hot)
+        accuracy=accuracy/FLAGS.num_aspects
         loss = tf.metrics.mean(per_example_loss)
         return {
             "eval_accuracy": accuracy,
