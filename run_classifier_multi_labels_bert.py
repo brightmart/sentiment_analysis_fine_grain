@@ -824,7 +824,7 @@ def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
             predictions_one_hot=tf.one_hot(predictions,depth=depth , dtype=tf.float32)
             label_id=label_ids_split[j]
             print("predictions_one_hot:",predictions_one_hot,";label_id:",label_id,";logits:",logits)
-            accuracy += tf.metrics.precision_at_k(label_id, predictions_one_hot)
+            accuracy += tf.metrics.precision_at_k(label_id, predictions_one_hot,1)
         accuracy=accuracy/FLAGS.num_aspects
         loss = tf.metrics.mean(per_example_loss)
         return {
