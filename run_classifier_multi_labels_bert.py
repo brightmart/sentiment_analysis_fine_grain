@@ -821,13 +821,13 @@ def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
         for j,logits in enumerate(logits_split):
             predictions=tf.argmax(logits, axis=-1, output_type=tf.int32)
             depth = tf.cast(num_labels / FLAGS.num_aspects,tf.int32)
-            predictions_one_hot=tf.one_hot(predictions,depth=depth , dtype=tf.float32)
+            predictions_one_hot=tf.one_hot(predictions,depth=depth , dtype=tf.float64)
             label_id=tf.cast(label_ids_split[j],dtype=tf.int64)
             print("predictions_one_hot:",predictions_one_hot,";label_id:",label_id,";logits:",logits)
             current_accuarcy= tf.metrics.precision_at_k(label_id, predictions_one_hot,1)
             print("###current_accuarcy:",current_accuarcy,";accuracy:",accuracy)
             accuracy+=tf.cast(current_accuarcy,dtype=tf.float64)
-        accuracy=accuracy/tf.constant(FLAGS.num_aspects,dtype=tf.float32)
+        accuracy=accuracy/tf.constant(FLAGS.num_aspects,dtype=tf.float64)
         loss = tf.metrics.mean(per_example_loss)
         return {
             "eval_accuracy": accuracy,
