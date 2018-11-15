@@ -815,7 +815,7 @@ def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
         #predictions = tf.argmax(logits, axis=-1, output_type=tf.int32)
         #print("###metric_fn.label_ids:",label_ids.shape,";predictions:",predictions.shape) # label_ids: (?,80);predictions:(?,)
         logits_split=tf.split(logits,FLAGS.num_aspects,axis=-1) # a list. length is num_aspects
-        label_ids_split=tf.split(logits,FLAGS.label_ids,axis=-1) # a list. length is num_aspects
+        label_ids_split=tf.split(logits,FLAGS.num_aspects,axis=-1) # a list. length is num_aspects
         accuracy=tf.constant(0.0)
 
         for j,logits in enumerate(logits_split):
