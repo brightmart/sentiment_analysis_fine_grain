@@ -816,7 +816,7 @@ def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
         #print("###metric_fn.label_ids:",label_ids.shape,";predictions:",predictions.shape) # label_ids: (?,80);predictions:(?,)
         logits_split=tf.split(logits,FLAGS.num_aspects,axis=-1) # a list. length is num_aspects
         label_ids_split=tf.split(logits,FLAGS.num_aspects,axis=-1) # a list. length is num_aspects
-        accuracy=tf.constant(0)
+        accuracy=tf.constant(0.0,dtype=tf.float32)
 
         for j,logits in enumerate(logits_split):
             predictions=tf.argmax(logits, axis=-1, output_type=tf.int32)
@@ -825,7 +825,7 @@ def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
             label_id=label_ids_split[j]
             print("predictions_one_hot:",predictions_one_hot,";label_id:",label_id,";logits:",logits)
             accuracy += tf.metrics.precision_at_k(label_id, predictions_one_hot,1)
-        accuracy=accuracy/FLAGS.num_aspects
+        accuracy=accuracy/tf.constant(FLAGS.num_aspects,dtype=tf.float32)
         loss = tf.metrics.mean(per_example_loss)
         return {
             "eval_accuracy": accuracy,
